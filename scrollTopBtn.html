@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<!-- resize 예제 -->
+  <head>
+    <style type="text/css">
+    	#browserInfo{
+    		padding:8px;
+    		border:1px solid blue;
+    		width:300px;
+    	}
+    </style>
+</head>
+
+<body>
+  <!--The resize event occurs when the browser window changes size.
+      jQuery resize() event is fire when the size of the browser is changed, 
+      and this event is only bind to $(window).--> 
+  <h1>jQuery resize() example</h1>
+  <h2>Try resize this browser</h2>
+  <div id="browserInfo"></div>
+
+  <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript">
+  	$(document).ready(function(){
+      $('#browserInfo').text('Browser (Width : '
+                  + $(window).width() + ' , Height :' + $(window).height() + ' )');
+
+      $(window).resize(function () {
+  		  $('#browserInfo').text('Browser (Width : ' + $(window).width() 
+                                   + ' , Height :' + $(window).height() + ' )');
+      });
+  	});	
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<!-- scroll top button-->
+  <head>
+    <style>
+    /*top스크롤*/
+    .gotop {position:fixed; 
+    left:80%; top:80%; width:50px; height:50px; 
+    background-color:#555; z-index:3;  text-align:center;
+    
+      /* firefox's individual border radius properties */ 
+      -moz-border-radius:30px;  
+      
+      /* webkit's individual border radius properties */ 
+      -webkit-border-radius:30px; 
+      border-radius:30px; 
+       cursor:pointer;  
+     }
+     
+     .gotop div {
+       z-index:4; 
+       display:block; 
+       position:relative; 
+       width:50px; height:50px; 
+       background:url("/images/scrolltop-arrow.png") no-repeat 7px 13px;}  
+     /*화살표를 png로 만들어서 위치값 잡아주었다.*/
+    </style>
+  </head>
+
+  <body style = "height:3000px">
+    <!-- 스크롤이 생기면 우하단에 top 버튼이 생기고 최상단이면 사라지는 버튼-->
+    <div id="gotop" class="gotop" >
+      <div></div> 
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script>
+      $(document).ready(function(){
+         /*스크롤 탑*/
+        $("div.gotop").fadeOut("slow"); //서서히 사라짐
+       
+        $(window).scroll(function(){ 
+        setTimeout(scroll_top, 1000);//화살표가 반응하여 생기는 시간, setTimeout() 1초마다 갱신
+        });
+        
+        $(".gotop").hover(function(){ 
+          $(this).css("background-color","#414040"); 
+        }, function(){ 
+          $(this).css("background-color","#555"); 
+            scroll_top();
+        });
+         
+        $("#gotop").click(function(){ 
+          $("html, body").animate({ scrollTop: 0 }, 600);//화살표 클릭시 화면 스크롤 속도 
+            return false; 
+        });
+        
+        function scroll_top(){ 
+          if($(window).scrollTop()<=1) { 
+            $("#gotop").fadeOut("slow"); 
+          } 
+          else { 
+            $("#gotop").fadeIn("slow"); 
+          }
+        }
+      });
+    </script>
+  </body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<!-- 스크롤 톱 -->
+  <head>
+    <style>
+      .collection-list-page {
+        position: relative;
+        width: 300px;
+        margin: 0 auto;
+        background-color: black;
+        margin-top:267px;
+        height: 633px;
+      }
+      
+      .clp-quick-scroll {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 50px;
+        height: 100%;
+        margin-right: -80px;
+        background-color: red;
+      }
+      
+      .clp-quick-scroll__top {  /* top button img*/
+        display: block;
+        background: url("//imgs.coupangcdn.com/image/redwood/pc/clp-top-btn-d.png") no-repeat;
+        background-size: 43px;
+        width: 43px;
+        height: 43px;
+      }
+      
+      .button-top-fixed {
+        position: fixed;
+        top:60px;
+        z-index: 10;
+      }
+      
+      .button-top-stay {
+        position: absolute;
+        bottom:0;
+      }
+      
+      #footer {
+        width: 300px;
+        height: 100px;
+        margin: 0 auto;
+        background-color:pink;
+      }
+    </style>
+
+  </head>
+
+  <body style = "height:3000px">
+    <div class = "collection-list-page">
+      <div class="clp-quick-scroll" style="visibility:hidden;">
+        <div class="clp-quick-scroll__button" style="top: auto;">
+          <a class="clp-quick-scroll__top" href="javascript:void(0)"></a>
+        </div>
+      </div>
+    </div>
+    <div id = "footer"></div>
+    
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script>
+      var wraper = $('.collection-list-page');
+      var quickScroll = $('.clp-quick-scroll');
+      var quickBtn = $('.clp-quick-scroll__button');
+      var standardY = wraper.offset().top; //267px
+      var quickTop = $('.clp-quick-scroll__top');
+      var win = $(window);
+      var screenHeight = win.height(); //644
+      //var distanceX = quickScroll.offset().left;
+      
+      init();
+      
+      function init(){
+        //win.resize(function(){ renewData(); });
+        win.on('scroll', function(){ updataScroll(); } );
+        quickTop.on('click', function(){ quickScrollTop(); });
+      }
+      
+      //function renewData(){
+        //distanceX = quickScroll.offset().left;
+        //quickBtn.css({'left' : distanceX});
+      //}
+      
+      function updataScroll(){
+        var windowScrollTop = win.scrollTop();
+        var stayPosition = $('#footer').offset().top;//900 footer부터 scroll한 윈도우의 높이 
+       
+        checkFloating( windowScrollTop, stayPosition );
+       
+      }
+     
+     function checkFloating( windowScrollTop, stayPosition){
+    
+        if( standardY <= windowScrollTop ){ //wraper 위치가 scroll한 위치보다 작거나 같을때 
+          //quickBtn.css({'left' : distanceX});
+          quickScroll.css({'visibility': 'visible'});
+          quickBtn.addClass('button-top-fixed');
+        }else{
+          quickScroll.css({'visibility': 'hidden'});
+          quickBtn.removeClass('button-top-fixed');
+        }
+        
+        if (stayPosition < windowScrollTop + screenHeight/2) { //영역 아래
+          quickBtn.removeClass('button-top-fixed');
+          quickBtn.addClass('button-top-stay');
+          //quickBtn.css('top', contents.height() - 112 + 'px');
+        } else { //영역 안
+          quickBtn.removeClass('button-top-stay');
+          quickBtn.addClass('button-top-fixed');
+          //quickBtn.css('top', 'auto');
+        }
+        
+      }
+      
+      function quickScrollTop(){   //click시 top으로 이동
+        $('html, body').animate({
+          scrollTop: 0
+        }, 200);
+      }
+    
+      quickTop.hover(function(){   //hover 시 이미지 바꿔줌
+        $(this).css("background-image", "url('//imgs.coupangcdn.com/image/redwood/pc/clp-top-btn-h.png')");
+      }, function(){
+        $(this).css("background-image", "url(//imgs.coupangcdn.com/image/redwood/pc/clp-top-btn-d.png)");
+      });
+      
+    </script>
+  </body>
+
+</html>
